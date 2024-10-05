@@ -1,97 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Graxx Alert</title>
-    <link rel="stylesheet" href="/style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="/main.js"></script>
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.init({
-          appId: "896d776a-cd23-472c-95d7-e10488cfdcd9",
-        });
-      });
-    </script>
-  </head>
-  <body>
-    <div class="flex flex-col items-center justify-center h-dvh">
-      <button onclick="toggleBle()" class="w-1/2 toggleble bg-blue-500 text-white px-4 py-2 rounded mb-4">Connect</button>
-      <button onclick="alarm()" class="w-1/2 togglealarm bg-blue-500 text-white px-4 py-2 rounded mb-4">Alarm: Off</button>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
 
-      <!-- wifi -->
-      <button onclick="wifi()" class="w-1/2 togglewifi bg-blue-500 text-white px-4 py-2 rounded mb-4">Connect WIFI</button>
-      <div id="wifiForm" class="hidden bg-white p-8 rounded-lg shadow-lg w-full max-w-sm">
-        <h2 class="text-2xl font-bold mb-6 text-center">Connect to WiFi</h2>
-        <form onsubmit="handleWifiFormSubmit(event)">
-            <div class="mb-4">
-                <label for="username" class="block text-gray-700 font-bold mb-2">Username</label>
-                <input type="text" id="wifissid" name="username" placeholder="Enter Username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-            </div>
-            <div class="mb-6">
-                <label for="password" class="block text-gray-700 font-bold mb-2">Password</label>
-                <input type="password" id="wifipassword" name="password" placeholder="Enter Password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" required>
-            </div>
-            <div class="flex items-center justify-between">
-                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Connect</button>
-            </div>
-        </form>
-      </div>
-        
-      <!-- schedule -->
-      <button onclick="schedule()" class="w-1/2 toggleble bg-blue-500 text-white px-4 py-2 rounded">Schedule</button>
-      <div id="scheduleForm" class="hidden bg-white p-8 rounded-lg shadow-lg w-full max-w-sm">
-        <h2 class="text-2xl font-bold mb-6 text-center">Set Alarm Schedule</h2>
-          <form id="alarmForm" onsubmit="handleAlarmFormSubmit(event)">
-              <div class="mb-4">
-                  <label class="block text-gray-700 font-bold mb-2">Select Days:</label>
-                  <div class="flex flex-wrap">
-                      <label class="mr-4 mb-2"><input type="checkbox" name="days" value="Monday" class="mr-2"> Monday</label>
-                      <label class="mr-4 mb-2"><input type="checkbox" name="days" value="Tuesday" class="mr-2"> Tuesday</label>
-                      <label class="mr-4 mb-2"><input type="checkbox" name="days" value="Wednesday" class="mr-2"> Wednesday</label>
-                      <label class="mr-4 mb-2"><input type="checkbox" name="days" value="Thursday" class="mr-2"> Thursday</label>
-                      <label class="mr-4 mb-2"><input type="checkbox" name="days" value="Friday" class="mr-2"> Friday</label>
-                      <label class="mr-4 mb-2"><input type="checkbox" name="days" value="Saturday" class="mr-2"> Saturday</label>
-                      <label class="mr-4 mb-2"><input type="checkbox" name="days" value="Sunday" class="mr-2"> Sunday</label>
-                  </div>
+    <!-- WEB APP MANIFEST -->
+    <link rel="manifest" href="/manifest.json">
+    <link href="/src/output.css" rel="stylesheet">
+    <script defer src="/lib/login.js"></script>
+</head>
+<body>
+    <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+        <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+          <img class="mx-auto h-10 w-auto" src="/android/Icon-192.png" alt="Your Company">
+          <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in to your account</h2>
+        </div>
+      
+        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          <form class="space-y-6 loginForm" action="/pages/home.html">
+            <div>
+              <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Username</label>
+              <div class="mt-2">
+                <input id="username" name="username" type="text" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
               </div>
-              <div class="mb-4">
-                  <label for="time_on" class="block text-gray-700 font-bold mb-2">Select Time On:</label>
-                  <input type="time" id="time_on" name="time_on" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-              </div>
-              <div class="mb-4">
-                  <label for="time_off" class="block text-gray-700 font-bold mb-2">Select Time Off:</label>
-                  <input type="time" id="time_off" name="time_off" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-              </div>
+            </div>
+      
+            <div>
               <div class="flex items-center justify-between">
-                  <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Set Alarm</button>
+                <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Password</label>
               </div>
+              <div class="mt-2">
+                <input id="password" name="password" type="password" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+              </div>
+            </div>
+      
+            <div>
+              <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign in</button>
+            </div>
           </form>
-      </div>
-
-      <!-- notification -->
-      <div class='onesignal-customlink-container w-full flex justify-center items-center h-0' onclick="handleToken()"></div>
-    
-
+        </div>
     </div>
 
+    <!-- SERVICE WORKER -->
     <script>
-      //sw
-      if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.register('/sw.js')
-          .then(registration => {
-              console.log('Service Worker registered with scope:', registration.scope);
-          })
-          .catch(error => {
-              console.log('Service Worker registration failed:', error);
-          });
-      }
-
+        if ("serviceWorker" in navigator) { navigator.serviceWorker.register("sw.js") }
     </script>
 
-  </body>
+</body>
 </html>

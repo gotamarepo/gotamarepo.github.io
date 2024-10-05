@@ -8,10 +8,19 @@ self.addEventListener("install", evt => {
       .then(cache => cache.addAll([
         "/",
         "index.html",
+        "init.js",
+        "param.js",
         "favicon.ico",
         "manifest.json",
-        "main.js",
-        "style.css"
+        "/pages/home.html",
+        "/pages/train.html",
+        "/pages/profile.html",
+        "/lib/mannequin.js",
+        "/lib/three.min.js",
+        "/lib/ml.js",
+        "/lib/main.js",
+        "/lib/auth.js",
+        "/lib/login.js",
       ]))
       .catch(err => console.error(err))
     );
