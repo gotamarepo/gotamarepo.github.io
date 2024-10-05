@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Graxx Alert</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/main.js"></script>
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "896d776a-cd23-472c-95d7-e10488cfdcd9",
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div class="flex flex-col items-center justify-center h-dvh">
+      <button onclick="toggleBle()" class="w-1/2 toggleble bg-blue-500 text-white px-4 py-2 rounded mb-4">Connect</button>
+      <button onclick="alarm()" class="w-1/2 togglealarm bg-blue-500 text-white px-4 py-2 rounded mb-4">Alarm: Off</button>
+
+      <!-- wifi -->
+      <button onclick="wifi()" class="w-1/2 togglewifi bg-blue-500 text-white px-4 py-2 rounded mb-4">Connect WIFI</button>
+      <div id="wifiForm" class="hidden bg-white p-8 rounded-lg shadow-lg w-full max-w-sm">
+        <h2 class="text-2xl font-bold mb-6 text-center">Connect to WiFi</h2>
+        <form onsubmit="handleWifiFormSubmit(event)">
+            <div class="mb-4">
+                <label for="username" class="block text-gray-700 font-bold mb-2">Username</label>
+                <input type="text" id="wifissid" name="username" placeholder="Enter Username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="mb-6">
+                <label for="password" class="block text-gray-700 font-bold mb-2">Password</label>
+                <input type="password" id="wifipassword" name="password" placeholder="Enter Password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="flex items-center justify-between">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Connect</button>
+            </div>
+        </form>
+      </div>
+        
+      <!-- schedule -->
+      <button onclick="schedule()" class="w-1/2 toggleble bg-blue-500 text-white px-4 py-2 rounded">Schedule</button>
+      <div id="scheduleForm" class="hidden bg-white p-8 rounded-lg shadow-lg w-full max-w-sm">
+        <h2 class="text-2xl font-bold mb-6 text-center">Set Alarm Schedule</h2>
+          <form id="alarmForm" onsubmit="handleAlarmFormSubmit(event)">
+              <div class="mb-4">
+                  <label class="block text-gray-700 font-bold mb-2">Select Days:</label>
+                  <div class="flex flex-wrap">
+                      <label class="mr-4 mb-2"><input type="checkbox" name="days" value="Monday" class="mr-2"> Monday</label>
+                      <label class="mr-4 mb-2"><input type="checkbox" name="days" value="Tuesday" class="mr-2"> Tuesday</label>
+                      <label class="mr-4 mb-2"><input type="checkbox" name="days" value="Wednesday" class="mr-2"> Wednesday</label>
+                      <label class="mr-4 mb-2"><input type="checkbox" name="days" value="Thursday" class="mr-2"> Thursday</label>
+                      <label class="mr-4 mb-2"><input type="checkbox" name="days" value="Friday" class="mr-2"> Friday</label>
+                      <label class="mr-4 mb-2"><input type="checkbox" name="days" value="Saturday" class="mr-2"> Saturday</label>
+                      <label class="mr-4 mb-2"><input type="checkbox" name="days" value="Sunday" class="mr-2"> Sunday</label>
+                  </div>
+              </div>
+              <div class="mb-4">
+                  <label for="time_on" class="block text-gray-700 font-bold mb-2">Select Time On:</label>
+                  <input type="time" id="time_on" name="time_on" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+              </div>
+              <div class="mb-4">
+                  <label for="time_off" class="block text-gray-700 font-bold mb-2">Select Time Off:</label>
+                  <input type="time" id="time_off" name="time_off" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+              </div>
+              <div class="flex items-center justify-between">
+                  <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Set Alarm</button>
+              </div>
+          </form>
+      </div>
+
+      <!-- notification -->
+      <div class='onesignal-customlink-container w-full flex justify-center items-center h-0' onclick="handleToken()"></div>
+    
+
+    </div>
+
+    <script>
+      //sw
+      if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+              console.log('Service Worker registered with scope:', registration.scope);
+          })
+          .catch(error => {
+              console.log('Service Worker registration failed:', error);
+          });
+      }
+
+    </script>
+
+  </body>
+</html>
