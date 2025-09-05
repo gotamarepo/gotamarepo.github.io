@@ -3,41 +3,479 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analisa Saham</title>
-    
-    <!-- Favicon links -->
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="manifest" href="site.webmanifest">
+    <title>RobotDog Controller</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .status-dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .disconnected {
+            background: #f44336;
+        }
+
+        .connected {
+            background: #4CAF50;
+        }
+
+        .connecting {
+            background: #FF9800;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .connection-panel {
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: linear-gradient(to right, #2196F3, #21CBF3);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .control-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: auto;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .movement-controls {
+            grid-column: 1 / 4;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: auto auto auto;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .movement-btn {
+            padding: 15px;
+            font-size: 1.2rem;
+        }
+
+        .up {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .left {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .stop {
+            grid-column: 2;
+            grid-row: 2;
+            background: linear-gradient(to right, #f44336, #ff9800);
+        }
+
+        .right {
+            grid-column: 3;
+            grid-row: 2;
+        }
+
+        .down {
+            grid-column: 2;
+            grid-row: 3;
+        }
+
+        .action-buttons {
+            grid-column: 1 / 4;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .speed-control {
+            grid-column: 1 / 4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .speed-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .github-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: background 0.3s;
+        }
+
+        .github-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .movement-btn {
+                padding: 12px;
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="header">
-        <div class="title">Analisa Saham</div>
-        <div class="search-container">
-            <input type="text" class="search-box" id="query" placeholder="Masukkan kode saham (contoh: BBCA.JK)">
+    <div class="container">
+        <header>
+            <h1>RobotDog Controller</h1>
+            <p class="subtitle">BLE Control Interface</p>
+        </header>
+        
+        <div class="status">
+            <div class="status-dot disconnected" id="statusDot"></div>
+            <span id="statusText">Disconnected</span>
         </div>
-        <div class="button-container">
-            <button class="search-button" id="searchButton" onclick="searchStock()">
-                <div class="loading-spinner" id="loadingSpinner"></div>
-                <span id="buttonText">Analisa Saham</span>
-            </button>
+        
+        <div class="connection-panel">
+            <button id="connectBtn">Connect to RobotDog</button>
+            <button id="disconnectBtn" disabled>Disconnect</button>
         </div>
+        
+        <div class="control-panel">
+            <div class="movement-controls">
+                <button class="movement-btn up" id="forwardBtn">↑</button>
+                <button class="movement-btn left" id="leftBtn">←</button>
+                <button class="movement-btn stop" id="stopBtn">STOP</button>
+                <button class="movement-btn right" id="rightBtn">→</button>
+                <button class="movement-btn down" id="backwardBtn">↓</button>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="standBtn">Stand</button>
+                <button id="calibrateBtn">Calibrate IMU</button>
+            </div>
+            
+            <div class="speed-control">
+                <label for="speedSlider">Speed: <span id="speedValue">0.3</span></label>
+                <input type="range" id="speedSlider" class="speed-slider" min="0.1" max="1.0" step="0.1" value="0.3">
+            </div>
+        </div>
+        
+        <a href="https://github.com/yourusername/robotdog" class="github-link" target="_blank">
+            View on GitHub
+        </a>
     </div>
+    
+    <footer>
+        <p>Designed for RobotDog BLE Control | 2023</p>
+    </footer>
 
-    <!-- Modal for displaying results -->
-    <div id="resultsModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div id="modalResultsContent"></div>
-        </div>
-    </div>
+    <script>
+        // UUIDs for the Nordic UART Service
+        const UART_SERVICE_UUID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
+        const UART_TX_CHARACTERISTIC_UUID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
+        const UART_RX_CHARACTERISTIC_UUID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
 
-    <script src="script.js"></script>
+        // DOM elements
+        const connectBtn = document.getElementById('connectBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        const forwardBtn = document.getElementById('forwardBtn');
+        const leftBtn = document.getElementById('leftBtn');
+        const rightBtn = document.getElementById('rightBtn');
+        const backwardBtn = document.getElementById('backwardBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const standBtn = document.getElementById('standBtn');
+        const calibrateBtn = document.getElementById('calibrateBtn');
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+
+        // BLE variables
+        let bluetoothDevice = null;
+        let uartService = null;
+        let rxCharacteristic = null;
+        let txCharacteristic = null;
+
+        // Update connection status UI
+        function updateConnectionStatus(connected) {
+            if (connected) {
+                statusDot.classList.remove('disconnected');
+                statusDot.classList.add('connected');
+                statusText.textContent = 'Connected to RobotDog';
+                connectBtn.disabled = true;
+                disconnectBtn.disabled = false;
+            } else {
+                statusDot.classList.remove('connected', 'connecting');
+                statusDot.classList.add('disconnected');
+                statusText.textContent = 'Disconnected';
+                connectBtn.disabled = false;
+                disconnectBtn.disabled = true;
+                bluetoothDevice = null;
+                uartService = null;
+                rxCharacteristic = null;
+                txCharacteristic = null;
+            }
+        }
+
+        // Show connecting status
+        function showConnecting() {
+            statusDot.classList.remove('disconnected');
+            statusDot.classList.add('connecting');
+            statusText.textContent = 'Connecting...';
+        }
+
+        // Send command to RobotDog
+        function sendCommand(command) {
+            if (!txCharacteristic) {
+                console.error('Not connected to RobotDog');
+                return;
+            }
+
+            // Add newline character to command
+            const commandWithNewline = command + '\n';
+            
+            // Convert command to ArrayBuffer
+            const encoder = new TextEncoder();
+            const data = encoder.encode(commandWithNewline);
+            
+            // Send command
+            txCharacteristic.writeValue(data)
+                .then(() => {
+                    console.log(`Command sent: ${command}`);
+                })
+                .catch(error => {
+                    console.error('Error sending command:', error);
+                });
+        }
+
+        // Connect to RobotDog
+        async function connectToDevice() {
+            try {
+                showConnecting();
+                
+                // Request Bluetooth device with UART service
+                bluetoothDevice = await navigator.bluetooth.requestDevice({
+                    filters: [
+                        { name: 'RobotDog' },
+                        { services: [UART_SERVICE_UUID] }
+                    ]
+                });
+
+                // Add event listener for disconnection
+                bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
+
+                // Connect to GATT server
+                const server = await bluetoothDevice.gatt.connect();
+
+                // Get UART service
+                uartService = await server.getPrimaryService(UART_SERVICE_UUID);
+
+                // Get RX characteristic for receiving data
+                rxCharacteristic = await uartService.getCharacteristic(UART_RX_CHARACTERISTIC_UUID);
+                
+                // Get TX characteristic for sending data
+                txCharacteristic = await uartService.getCharacteristic(UART_TX_CHARACTERISTIC_UUID);
+
+                // Start notifications for RX characteristic if needed
+                // await rxCharacteristic.startNotifications();
+                // rxCharacteristic.addEventListener('characteristicvaluechanged', handleNotifications);
+
+                updateConnectionStatus(true);
+                
+            } catch (error) {
+                console.error('Connection failed:', error);
+                updateConnectionStatus(false);
+                alert('Connection failed: ' + error.message);
+            }
+        }
+
+        // Handle disconnection
+        function onDisconnected() {
+            console.log('Bluetooth device disconnected');
+            updateConnectionStatus(false);
+        }
+
+        // Disconnect from device
+        function disconnectFromDevice() {
+            if (!bluetoothDevice) {
+                return;
+            }
+
+            if (bluetoothDevice.gatt.connected) {
+                bluetoothDevice.gatt.disconnect();
+            } else {
+                updateConnectionStatus(false);
+            }
+        }
+
+        // Handle notifications from device (if needed)
+        function handleNotifications(event) {
+            // Handle incoming data from RobotDog if needed
+            const value = event.target.value;
+            // Decode the received value here if needed
+        }
+
+        // Event listeners
+        connectBtn.addEventListener('click', connectToDevice);
+        disconnectBtn.addEventListener('click', disconnectFromDevice);
+
+        // Movement controls
+        forwardBtn.addEventListener('click', () => sendCommand('walk'));
+        leftBtn.addEventListener('click', () => sendCommand('left'));
+        rightBtn.addEventListener('click', () => sendCommand('right'));
+        backwardBtn.addEventListener('click', () => sendCommand('back'));
+        stopBtn.addEventListener('click', () => sendCommand('stop'));
+        standBtn.addEventListener('click', () => sendCommand('stand'));
+        calibrateBtn.addEventListener('click', () => sendCommand('calibrate'));
+
+        // Speed control
+        speedSlider.addEventListener('input', () => {
+            const speed = speedSlider.value;
+            speedValue.textContent = speed;
+            sendCommand(`speed ${speed}`);
+        });
+
+        // Touch events for mobile devices
+        let touchTimeout;
+        
+        function setupTouchButton(button, command, isContinuous = false) {
+            button.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                sendCommand(command);
+                
+                if (isContinuous) {
+                    touchTimeout = setInterval(() => {
+                        sendCommand(command);
+                    }, 200);
+                }
+            });
+            
+            button.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                if (isContinuous) {
+                    clearInterval(touchTimeout);
+                }
+            });
+        }
+
+        // Set up touch events for movement buttons
+        setupTouchButton(forwardBtn, 'walk', true);
+        setupTouchButton(leftBtn, 'left', true);
+        setupTouchButton(rightBtn, 'right', true);
+        setupTouchButton(backwardBtn, 'back', true);
+        
+        // Check if Web Bluetooth is supported
+        if (!navigator.bluetooth) {
+            alert('Web Bluetooth API is not available in this browser. Please use Chrome or Edge on Android.');
+            connectBtn.disabled = true;
+        }
+    </script>
 </body>
 </html>
