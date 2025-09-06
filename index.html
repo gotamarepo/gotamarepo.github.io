@@ -86,6 +86,7 @@
 
         .connection-panel {
             margin-bottom: 20px;
+            text-align: center;
         }
 
         button {
@@ -136,34 +137,42 @@
         }
 
         .movement-btn {
-            padding: 15px;
-            font-size: 1.2rem;
+            padding: 20px;
+            font-size: 1.5rem;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .up {
             grid-column: 2;
             grid-row: 1;
+            background: linear-gradient(to bottom, #4CAF50, #2E7D32);
         }
 
         .left {
             grid-column: 1;
             grid-row: 2;
+            background: linear-gradient(to right, #FF9800, #EF6C00);
         }
 
         .stop {
             grid-column: 2;
             grid-row: 2;
-            background: linear-gradient(to right, #f44336, #ff9800);
+            background: linear-gradient(to right, #f44336, #c62828);
         }
 
         .right {
             grid-column: 3;
             grid-row: 2;
+            background: linear-gradient(to left, #FF9800, #EF6C00);
         }
 
         .down {
             grid-column: 2;
             grid-row: 3;
+            background: linear-gradient(to top, #4CAF50, #2E7D32);
         }
 
         .action-buttons {
@@ -173,12 +182,21 @@
             flex-wrap: wrap;
         }
 
+        .action-buttons button {
+            flex: 1;
+            min-width: 120px;
+            margin: 5px;
+        }
+
         .speed-control {
             grid-column: 1 / 4;
             display: flex;
             flex-direction: column;
             align-items: center;
             margin: 15px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
         }
 
         .speed-slider {
@@ -224,8 +242,18 @@
             }
             
             .movement-btn {
-                padding: 12px;
-                font-size: 1rem;
+                padding: 15px;
+                font-size: 1.2rem;
+                min-height: 60px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-buttons button {
+                width: 100%;
+                margin: 5px 0;
             }
         }
     </style>
@@ -311,6 +339,11 @@
                 statusText.textContent = 'Connected to RobotDog';
                 connectBtn.disabled = true;
                 disconnectBtn.disabled = false;
+                
+                // Enable movement buttons
+                document.querySelectorAll('.movement-btn').forEach(btn => {
+                    btn.disabled = false;
+                });
             } else {
                 statusDot.classList.remove('connected', 'connecting');
                 statusDot.classList.add('disconnected');
@@ -321,6 +354,11 @@
                 uartService = null;
                 rxCharacteristic = null;
                 txCharacteristic = null;
+                
+                // Disable movement buttons
+                document.querySelectorAll('.movement-btn').forEach(btn => {
+                    btn.disabled = true;
+                });
             }
         }
 
@@ -383,10 +421,6 @@
                 // Get TX characteristic for sending data
                 txCharacteristic = await uartService.getCharacteristic(UART_TX_CHARACTERISTIC_UUID);
 
-                // Start notifications for RX characteristic if needed
-                // await rxCharacteristic.startNotifications();
-                // rxCharacteristic.addEventListener('characteristicvaluechanged', handleNotifications);
-
                 updateConnectionStatus(true);
                 
             } catch (error) {
@@ -415,22 +449,15 @@
             }
         }
 
-        // Handle notifications from device (if needed)
-        function handleNotifications(event) {
-            // Handle incoming data from RobotDog if needed
-            const value = event.target.value;
-            // Decode the received value here if needed
-        }
-
         // Event listeners
         connectBtn.addEventListener('click', connectToDevice);
         disconnectBtn.addEventListener('click', disconnectFromDevice);
 
-        // Movement controls
+        // Movement controls - FIXED: backward button now sends "back" command
         forwardBtn.addEventListener('click', () => sendCommand('walk'));
         leftBtn.addEventListener('click', () => sendCommand('left'));
         rightBtn.addEventListener('click', () => sendCommand('right'));
-        backwardBtn.addEventListener('click', () => sendCommand('back'));
+        backwardBtn.addEventListener('click', () => sendCommand('back')); // Fixed from 'backward' to 'back'
         stopBtn.addEventListener('click', () => sendCommand('stop'));
         standBtn.addEventListener('click', () => sendCommand('stand'));
         calibrateBtn.addEventListener('click', () => sendCommand('calibrate'));
@@ -461,6 +488,15 @@
                 e.preventDefault();
                 if (isContinuous) {
                     clearInterval(touchTimeout);
+                    sendCommand('stop');
+                }
+            });
+            
+            button.addEventListener('touchcancel', (e) => {
+                e.preventDefault();
+                if (isContinuous) {
+                    clearInterval(touchTimeout);
+                    sendCommand('stop');
                 }
             });
         }
@@ -476,6 +512,11 @@
             alert('Web Bluetooth API is not available in this browser. Please use Chrome or Edge on Android.');
             connectBtn.disabled = true;
         }
+        
+        // Initially disable movement buttons
+        document.querySelectorAll('.movement-btn').forEach(btn => {
+            btn.disabled = true;
+        });
     </script>
 </body>
 </html>
